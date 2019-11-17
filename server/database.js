@@ -15,20 +15,28 @@ const getItems = () =>{
             ...phone,
             id: "phones-"+index,
             category: "phones",
-        })
+            price: cleanPrice(phone.price),
+        });
     });
     laptops.forEach( ( laptop,index )=>{
         items.push({
             ...laptop,
             id: "laptops-"+index,
             category: "laptops",
-        })
+            price: cleanPrice(laptop.price),
+        });
     })
     return items;
 }
 
 const getItem = (itemId) =>{
     return getItems().find (item => item.id === itemId);
+};
+
+const cleanPrice = (dirty) =>{
+    const parts = dirty.split("to");
+    console.log("parts",parts);
+    return parts[0].replace("$","");
 };
 
 module.exports = {

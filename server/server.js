@@ -3,17 +3,17 @@ const app = express()
 const path = require('path');
 const PORT = process.env.PORT || 3000;
 const DB = require("./database.js");
+const mongoose = require("mongoose");
+require('dotenv').config();
+const userRouter = require("./user.js");
 
 
 
+const DB_URL= `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS}@cluster0-3kwu5.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`; 
 
-app.get("/api/items", (req, res) => {
-    res.json(DB.getItems());
-});
 
-app.get("/api/items/:itemId", (req, res) => {
-    res.send(DB.getItem(req.params.itemId));
-});
+
+app.use(userRouter)
 
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, "../dist", "index.html"));
@@ -25,8 +25,17 @@ app.get('/items/*', (req, res) => {
 
 app.use(express.static('dist'));
 
-
-app.listen(PORT, () => {
-    console.log("Server started", PORT);
-    console.log(`http://localhost:${PORT}`);
+function listen(){    
+    app.listen(PORT, () => {
+        console.log("Server started", PORT);
+        console.log(`http://localhost:${PORT}`);
   });
+}
+
+mongoose.connect(DB_URL)
+    .then(()=>{
+        listen();
+    })
+    .catch(err=>{
+        console.error("DB ERROR");
+    });

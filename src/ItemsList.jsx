@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import "./itemslist.css";
 
 
 
 
-const ItemList= (props) => {
+const ItemsList= (props) => {
     return(
         
         <div className={"content"}>
@@ -24,7 +25,7 @@ const ItemList= (props) => {
     );
 };
 
-ItemList.propTypes = {
+ItemsList.propTypes = {
     items: PropTypes.array.isRequired
 };
 
@@ -49,4 +50,4 @@ Item.propTypes = {
     price: PropTypes.string.isRequired
 };
 
-export default ItemList;
+export default ItemsList;
