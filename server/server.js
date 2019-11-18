@@ -5,15 +5,19 @@ const PORT = process.env.PORT || 3000;
 const DB = require("./database.js");
 const mongoose = require("mongoose");
 require('dotenv').config();
-const userRouter = require("./user.js");
+const itemRouter = require("./item.router.js");
+const Item = require("./item.model.js");
+const userRouter = require("./user.router.js");
+const bodyParser= require("body-parser");
 
 
 
 const DB_URL= `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS}@cluster0-3kwu5.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`; 
 
+app.use(bodyParser.json());
 
-
-app.use(userRouter)
+app.use(itemRouter);
+app.use(userRouter);
 
 app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, "../dist", "index.html"));
@@ -33,9 +37,48 @@ function listen(){
 }
 
 mongoose.connect(DB_URL)
-    .then(()=>{
+    .then(()=>{     
+        console.log("DB Access granted");
+        //deleteAllItems();
+        migrate();
         listen();
+        
     })
     .catch(err=>{
-        console.error("DB ERROR");
+        console.error("DB ERROR",err);
     });
+
+function migrate(){
+
+    Item.count({},(err,countNr)=>{
+        if(err) throw err;
+        if(countNr >0) {
+            console.log("items already exist, no migrations");
+            return;
+        }       
+        saveAllItems();
+    });
+}
+
+function deleteAllItems(){
+    Item.deleteMany({},(err,doc)=>{
+        console.log('err',err,"doc",doc);
+    });
+};
+
+function saveAllItems(){
+    console.log("migrate started")
+    const items=DB.getItems();
+    items.forEach(item =>{
+        const document = new Item(item);
+        document.save((err)=>{
+            if(err){
+                console.log(err);
+                throw new Error("something happened during save");
+            }
+            console.log('save success');
+        });
+    })
+}
+
+
