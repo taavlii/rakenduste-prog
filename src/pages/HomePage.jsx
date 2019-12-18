@@ -92,7 +92,7 @@ class HomePage extends React.PureComponent{
                 </div>
                 <div className={"items-header-wrapper"}>
                     <div>
-                        {this.getVisibleItems.length} items found for {this.state.selectedCategories.join("/")}
+                        {this.getVisibleItems().length} items found for {this.state.selectedCategories.join("/")}
                     </div>
                     <SortDropdown 
                         direction={this.state.sortDirection}
